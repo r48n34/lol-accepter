@@ -2,7 +2,7 @@
   "name": "react-nodegui-starter",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Atul R <atulanand94@gmail.com>",
+  "author": "Reemo Ng <devreemo@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {

@@ -1,4 +1,4 @@
-import { authenticate, createHttp1Request, createWebSocketConnection } from 'league-connect'
+// import { authenticate, createHttp1Request, createWebSocketConnection } from 'league-connect'
 import { Renderer } from "@nodegui/react-nodegui";
 import React from "react";
 import App from "./app";
@@ -13,40 +13,40 @@ if (module.hot) {
   });
 }
 
-( async () => {
-  const ws = await createWebSocketConnection({
-    authenticationOptions: {
-      awaitConnection: true
-    },
-    pollInterval: 2500,
-    maxRetries: 10
-  })
+// ( async () => {
+//   const ws = await createWebSocketConnection({
+//     authenticationOptions: {
+//       awaitConnection: true
+//     },
+//     pollInterval: 2500,
+//     maxRetries: 10
+//   })
   
-  ws.subscribe('/lol-chat/v1/conversations/active', (data, event) => {
-    // data: deseralized json object from the event payload
-    // event: the entire event (see EventResponse<T>)
+//   ws.subscribe('/lol-chat/v1/conversations/active', (data, event) => {
+//     // data: deseralized json object from the event payload
+//     // event: the entire event (see EventResponse<T>)
   
-    // console.log(data)
-  })
+//     // console.log(data)
+//   })
 
-  ws.subscribe('/lol-matchmaking/v1/ready-check', async (data, event) => {
-      // data: deseralized json object from the event payload
-      // event: the entire event (see EventResponse<T>)
-      // console.log('/lol-matchmaking/v1/ready-check')
+//   ws.subscribe('/lol-matchmaking/v1/ready-check', async (data, event) => {
+//       // data: deseralized json object from the event payload
+//       // event: the entire event (see EventResponse<T>)
+//       // console.log('/lol-matchmaking/v1/ready-check')
 
-      if(data && data.playerResponse && data.playerResponse === "Declined"){
-          return
-      }
+//       if(data && data.playerResponse && data.playerResponse === "Declined"){
+//           return
+//       }
 
-      // console.log(data)
-      // console.log(event)
+//       // console.log(data)
+//       // console.log(event)
 
-      const credentials = await authenticate()
-      await createHttp1Request({
-          method: 'POST',
-          url: '/lol-matchmaking/v1/ready-check/decline'
-      }, credentials);
+//       const credentials = await authenticate()
+//       await createHttp1Request({
+//           method: 'POST',
+//           url: '/lol-matchmaking/v1/ready-check/decline'
+//       }, credentials);
 
-  })
-})()
+//   })
+// })()
 

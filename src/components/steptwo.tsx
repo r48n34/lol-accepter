@@ -1,19 +1,29 @@
-import { Text, View, Button, useEventHandler } from "@nodegui/react-nodegui";
+import { Text, View, Button, useEventHandler, CheckBox } from "@nodegui/react-nodegui";
 import { QPushButtonSignals } from "@nodegui/nodegui";
 import React from "react";
 import open from "open";
 
 export function StepTwo() {
-  const btnHandler = useEventHandler<QPushButtonSignals>(
-    {
-      clicked: () => open("https://react.nodegui.org").catch(console.log)
-    },
-    []
-  );
-  return (
-    <View style={containerStyle}>
-      <Text style={textStyle} wordWrap={true}>
-        {`
+    const btnHandler = useEventHandler<QPushButtonSignals>(
+        {
+            clicked: () => open("https://react.nodegui.org").catch(console.log)
+        },
+        []
+    );
+
+    const checkHandler = {
+        clicked: (checked: boolean) => {
+            console.log(`the button was ${checked}`);
+        }
+    };
+
+    return (
+        <View style={containerStyle}>
+
+            <CheckBox text={"Hello World"} on={checkHandler} />
+
+            <Text style={textStyle} wordWrap={true}>
+                {`
           <ol>
             <li>
                 Open chrome and navigate to chrome://inspect. You should see a target below with your app.
@@ -28,14 +38,14 @@ export function StepTwo() {
             </li>
           </ol>
         `}
-      </Text>
-      <Button
-        style={btnStyle}
-        on={btnHandler}
-        text={`Open React NodeGui docs`}
-      ></Button>
-    </View>
-  );
+            </Text>
+            <Button
+                style={btnStyle}
+                on={btnHandler}
+                text={`Open React NodeGui docs`}
+            ></Button>
+        </View>
+    );
 }
 
 const containerStyle = `
