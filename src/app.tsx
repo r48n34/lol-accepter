@@ -1,37 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Window, Button, View, Text, CheckBox, useEventHandler } from "@nodegui/react-nodegui"
-import { Direction } from "@nodegui/nodegui";
+import { Window, View, Text, CheckBox, useEventHandler } from "@nodegui/react-nodegui"
+// import { Direction } from "@nodegui/nodegui";
 
 import { createWebSocketConnection, authenticate, createHttp1Request } from "league-connect";
 import { QCheckBoxSignals } from "@nodegui/nodegui";
 
 function App() {
 
-    const [id, setId] = useState<string>("");
+    // const [id, setId] = useState<string>("");
     const [isAutoAccept, setIsAutoAccept] = useState<boolean>(true);
 
     useEffect(() => {
-        // console.log("Hello");
-
         (async () => {
             const ws = await createWebSocketConnection({
                 authenticationOptions: {
                     awaitConnection: true
                 },
-                pollInterval: 2500,
+                pollInterval: 2000,
                 maxRetries: 10
             })
 
-            ws.subscribe('/lol-chat/v1/conversations/active', (data, event) => {
-                // data: deseralized json object from the event payload
-                // event: the entire event (see EventResponse<T>)
+            // ws.subscribe('/lol-chat/v1/conversations/active', (data, event) => {
+            //     // data: deseralized json object from the event payload
+            //     // event: the entire event (see EventResponse<T>)
 
-                console.log(data)
+            //     // console.log(data)
 
-                if (data && data.id) {
-                    setId(data.id)
-                }
-            })
+            //     // if (data && data.id) {
+            //     //     setId(data.id)
+            //     // }
+            // })
 
             ws.subscribe('/lol-matchmaking/v1/ready-check', async (data, event) => {
                 // data: deseralized json object from the event payload
@@ -47,7 +45,7 @@ function App() {
                 if (isAutoAccept) {
                     await createHttp1Request({
                         method: 'POST',
-                        url: '/lol-matchmaking/v1/ready-check/decline'
+                        url: '/lol-matchmaking/v1/ready-check/accept'
                         // url: '/lol-matchmaking/v1/ready-check/accept'
                     }, credentials);
                 }
@@ -102,7 +100,5 @@ const labelStyle = `
     font-size: 24px;
     color: "#6e6e6e";
 `;
-
-
 
 export default App
