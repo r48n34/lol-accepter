@@ -1,62 +1,87 @@
 import React, { useEffect, useState } from "react";
-import { Window, View, Text, CheckBox, useEventHandler } from "@nodegui/react-nodegui"
-// import { Direction } from "@nodegui/nodegui";
-
-import { createWebSocketConnection, authenticate, createHttp1Request } from "league-connect";
+import { Window, View, Text, CheckBox, useEventHandler, Button } from "@nodegui/react-nodegui"
 import { QCheckBoxSignals } from "@nodegui/nodegui";
+
+import { createWebSocketConnection, authenticate, createHttp1Request, LeagueClient } from "league-connect";
+import { userLabelStyle, cbStyle, labelStyle } from "./style/app.style";
+
+const timer = (t: number = 1000) => { return new Promise( rec => setTimeout( () => rec(true), t))}
 
 function App() {
 
-    // const [id, setId] = useState<string>("");
-    const [isAutoAccept, setIsAutoAccept] = useState<boolean>(true);
+    const [ userPresentName, setUserPresentName ] = useState<string>("");
+    const [ isAutoAccept, setIsAutoAccept ] = useState<boolean>(true);
+
+    async function getCurrentUserInfo(){
+
+        try {
+            setUserPresentName("@loading...@");
+            await timer(5000)
+
+            const credentials = await authenticate()
+            const response = await createHttp1Request({
+                method: 'GET',
+                url: '/lol-summoner/v1/current-summoner'
+            }, credentials)
+
+            const result = response.json();
+
+            const username = `${result.gameName} ${result.tagLine}`
+            setUserPresentName(username)
+        } 
+        catch (error) {
+            return
+        }
+        
+    }
+
+    async function main(){
+        
+        const ws = await createWebSocketConnection({
+            authenticationOptions: {
+                awaitConnection: true
+            },
+            pollInterval: 2000,
+            maxRetries: 10
+        })
+
+        getCurrentUserInfo();
+
+        ws.subscribe('/lol-matchmaking/v1/ready-check', async (data) => {
+
+            if (data && data.playerResponse && data.playerResponse === "Declined") {
+                return
+            }
+
+            const credentials = await authenticate()
+
+            if (isAutoAccept) {
+                await createHttp1Request({
+                    method: 'POST',
+                    url: '/lol-matchmaking/v1/ready-check/accept'
+                    // url: '/lol-matchmaking/v1/ready-check/decline'
+                }, credentials);
+            }
+
+        })
+
+        ws.subscribe('/lol-login/v1/session', async (data) => {
+            if(data && data.state && data.state === 'SUCCEEDED'){
+                getCurrentUserInfo();
+            }
+            else if(data && data.state && data.state === 'LOGGING_OUT'){
+                setUserPresentName("")
+            }
+        })
+
+        return () => {
+            ws.close()
+        }
+
+    }
 
     useEffect(() => {
-        (async () => {
-            const ws = await createWebSocketConnection({
-                authenticationOptions: {
-                    awaitConnection: true
-                },
-                pollInterval: 2000,
-                maxRetries: 10
-            })
-
-            // ws.subscribe('/lol-chat/v1/conversations/active', (data, event) => {
-            //     // data: deseralized json object from the event payload
-            //     // event: the entire event (see EventResponse<T>)
-
-            //     // console.log(data)
-
-            //     // if (data && data.id) {
-            //     //     setId(data.id)
-            //     // }
-            // })
-
-            ws.subscribe('/lol-matchmaking/v1/ready-check', async (data, event) => {
-                // data: deseralized json object from the event payload
-                // event: the entire event (see EventResponse<T>)
-                // console.log('/lol-matchmaking/v1/ready-check')
-
-                if (data && data.playerResponse && data.playerResponse === "Declined") {
-                    return
-                }
-
-                const credentials = await authenticate()
-
-                if (isAutoAccept) {
-                    await createHttp1Request({
-                        method: 'POST',
-                        url: '/lol-matchmaking/v1/ready-check/accept'
-                        // url: '/lol-matchmaking/v1/ready-check/accept'
-                    }, credentials);
-                }
-
-                // await createHttp1Request({
-                //     method: 'POST',
-                //     url: '/lol-matchmaking/v1/ready-check/decline'
-                // }, credentials);
-
-            })
-        })()
+        main()
     }, [])
 
     const checkHandler = useEventHandler<QCheckBoxSignals>(
@@ -64,13 +89,31 @@ function App() {
             clicked: (checked: boolean) => {
                 setIsAutoAccept(checked)
             }
-        },
-        []
+        },[]
+    );
+
+    const buttonHandler = useEventHandler<QCheckBoxSignals>(
+        {
+            clicked: () => {
+                getCurrentUserInfo();
+            }
+        },[]
     );
 
     return (
         <Window windowTitle="LOL accepter">
             <View>
+               
+                <Text style={userLabelStyle}>
+                    { 
+                        userPresentName === "" 
+                        ? "Offline" 
+                        : userPresentName === "@loading...@" 
+                        ? "Loading ..." 
+                        : `Welcome ${userPresentName}`
+                    }
+                </Text>
+
                 <CheckBox
                     style={cbStyle}
                     text={"Auto accept"}
@@ -81,24 +124,11 @@ function App() {
                 <Text id="label" style={labelStyle}>
                     System is {isAutoAccept ? "enable" : "disable"} now
                 </Text>
+
+                <Button text={"Reload status"} on={buttonHandler} />
             </View>
         </Window>
     )
 };
-
-const cbStyle = `
-    margin-top:4px;
-    margin-left:50%;
-    margin-right:50%;
-    font-size:38px;
-`;
-
-const labelStyle = `
-    margin-top:8px;
-    margin-left:50%;
-    margin-right:50%;
-    font-size: 24px;
-    color: "#6e6e6e";
-`;
 
 export default App
