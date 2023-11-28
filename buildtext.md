@@ -1,0 +1,1 @@
+pyinstaller -F main.py --name=lol_accepter --clean --noconfirm --noconsole --onedir --icon=assets\favicon.ico

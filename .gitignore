@@ -1,4 +1,3 @@
-node_modules
-dist/
-*.log
-deploy/win32
+build
+dist
+lol_acc
