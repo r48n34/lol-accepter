@@ -22,9 +22,9 @@ jobs:
         run: |
           yarn 
           yarn build-linux
-      - name: Archive built files
-        uses: actions/upload-artifact@v3
-        with:
-          name: build_ubuntu_pkg
-          path: deploy
+      # - name: Archive built files
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: build_ubuntu_pkg
+      #     path: deploy
         
