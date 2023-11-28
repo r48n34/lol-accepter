@@ -2,6 +2,16 @@
 
 Simple plugins for accepting match while away from keyboard with League of Legends LCU  
 
+<img src="assets/tools.png" width="300" alt="project_logo"/>  
+
+## Features
+1. Auto accept any matches up.
+2. No need to install.
+
+## Download
+
+You can download it from [Here](https://github.com/r48n34/lol-accepter/releases)
+
 ## Disclaimer
 The plguins is builded with [league-connect](https://www.npmjs.com/package/league-connect) ft. LCU API. No others third party libraries or plugin involved. Also, the plugin is base on local, no data will be sent out.
 
