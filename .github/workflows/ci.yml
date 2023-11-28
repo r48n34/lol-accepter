@@ -10,21 +10,15 @@ on:
 #   SERVER_DIR: /home/reemo-blog
 
 jobs:
-  build-ubuntu:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04, windows-2022 ]
-    container: node:18.18.2
+  build:
+    runs-on: windows-latest
     steps:
-      - name: Set up checkout@v3
-        uses: actions/checkout@v3
-      - name: Install npm deps
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: yarn
-      - run: yarn build-win
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+      - name: Build
+        run: yarn
+      - name: Run tests
+        run: yarn build-win
       # - name: Archive built files
       #   uses: actions/upload-artifact@v3
       #   with:
