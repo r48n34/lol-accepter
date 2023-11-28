@@ -3,7 +3,7 @@ name: ci-flow
 on:
   push:
     branches:
-      - 'giu'
+      - 'gui'
   workflow_dispatch:
 
 # env:
@@ -11,7 +11,10 @@ on:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04, macos-12, windows-2022 ]
     container: node:lts-alpine
     steps:
       - uses: actions/checkout@v3
@@ -24,38 +27,4 @@ jobs:
         with:
           name: build_ubuntu_pkg
           path: deploy
-
-  # upload-to-server:
-  #   needs: build-web
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: restore built files server
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: build_web
-  #         path: build
-  #     - name: copy file via ssh password
-  #       uses: appleboy/scp-action@v0.1.4
-  #       with:
-  #         host: ${{ secrets.HOST }}
-  #         username: ${{ secrets.SSH_USERNAME }}
-  #         password: ${{ secrets.SSH_PASSWORD }}
-  #         source: build/*
-  #         target: ${{ env.SERVER_DIR }}
-
-  # ssh-vm:
-  #   needs: upload-to-server
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Executing remote ssh
-  #     uses: appleboy/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.HOST }}
-  #       username: ${{ secrets.SSH_USERNAME }}
-  #       password: ${{ secrets.SSH_PASSWORD }}
-  #       script: |
-  #         cd ${{ env.SERVER_DIR }}
-  #         git pull
-  #         static-web-server --port 8084 --root ./build &
         
