@@ -19,9 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install npm deps
-        run: |
-          yarn 
-          yarn build-linux
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: yarn
+      - run: yarn build-win
       # - name: Archive built files
       #   uses: actions/upload-artifact@v3
       #   with:
