@@ -18,6 +18,7 @@ class MyWidget(QtWidgets.QWidget):
 
         self.setWindowTitle('lol accepter')
         self.setFixedSize(350, 120)
+        self.setWindowIcon(QIcon(self.load_file('assets/favicon.ico')))  
         self.ui()
 
         # Connecter
@@ -26,7 +27,10 @@ class MyWidget(QtWidgets.QWidget):
         self.thread_lcu_driver.run = self.lcu_setup       
         self.thread_lcu_driver.start()       
 
-        self.setUserName("")  
+        self.setUserName("")
+
+    def load_file(self, file_name: str) -> str:
+        return join(dirname(__file__), file_name) 
     
     def ui(self):
 
@@ -56,18 +60,22 @@ class MyWidget(QtWidgets.QWidget):
         # Adding an icon 
         CURRENT_DIRECTORY = dirname(realpath(__file__))
         self.icon = QIcon(join(CURRENT_DIRECTORY, "favicon.ico")) 
-
         
         # Adding item on the menu bar 
-        self.tray = QtWidgets.QSystemTrayIcon(self) 
-        self.tray.setIcon(self.icon) 
+        self.tray = QtWidgets.QSystemTrayIcon(self)
+
+        # Check if System supports STray icons
+        if self.tray.isSystemTrayAvailable():
+            self.tray.setIcon(self.windowIcon())
+
+        # self.tray.setIcon(self.icon) 
         self.tray.setVisible(True) 
         self.tray.show() 
         
         # Creating the options 
         self.menu = QtWidgets.QMenu(self) 
-        self.open_windows = QtWidgets.QAction("Open") 
-        self.open_windows.triggered.connect(self.show) 
+        self.open_windows = QtWidgets.QAction("Open / Hide") 
+        self.open_windows.triggered.connect(lambda: self.hide() if self.isVisible() else self.show()) 
         self.menu.addAction(self.open_windows) 
         
         # To quit the app 
