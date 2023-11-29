@@ -1,1 +1,1 @@
-pyinstaller -F main.py --name=lol_accepter --clean --noconfirm --noconsole --icon=favicon.ico -d imports --add-data="favicon.ico;."
+pyinstaller -F main.py --name=lol_accepter --onedir --clean --noconfirm --noconsole --icon=favicon.ico -d imports --add-data="favicon.ico;."

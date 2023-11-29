@@ -7,6 +7,8 @@ Simple plugins for accepting match while away from keyboard with League of Legen
 ## Features
 1. Auto accept any matches up.
 2. No need to install.
+3. Easy to hide and shows, user friendly.
+4. For windows OS only currently.
 
 ## Download
 
