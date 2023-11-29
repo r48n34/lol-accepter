@@ -2,6 +2,7 @@
 from lcu_driver import Connector
 
 import sys
+from os.path import dirname, realpath, join
 from time import sleep
 from PyQt5 import QtWidgets
 # from PyQt5.QtWidgets import QApplication, QLabel, QCheckBox, QSystemTrayIcon, QAction, QMenu 
@@ -54,12 +55,15 @@ class MyWidget(QtWidgets.QWidget):
         self.checkbox_accept.setFont(self.checkbox_accept_font)
 
         # Adding an icon 
-        self.icon = QIcon("assets/favicon.ico") 
+        CURRENT_DIRECTORY = dirname(realpath(__file__))
+        self.icon = QIcon(join(CURRENT_DIRECTORY, "favicon.ico")) 
+
         
         # Adding item on the menu bar 
         self.tray = QtWidgets.QSystemTrayIcon(self) 
         self.tray.setIcon(self.icon) 
         self.tray.setVisible(True) 
+        self.tray.show() 
         
         # Creating the options 
         self.menu = QtWidgets.QMenu(self) 
