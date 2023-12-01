@@ -7,7 +7,7 @@ from time import sleep
 from PyQt5 import QtWidgets
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QThread, Qt
+from PyQt5.QtCore import QThread, Qt, QRect
 
 class MyWidget(QtWidgets.QWidget):
 
@@ -72,21 +72,23 @@ class MyWidget(QtWidgets.QWidget):
         self.checkbox_accept.setFont(self.checkbox_accept_font)
 
     def onCheckboxClicked(self):
-        print(self.checkbox_accept.isChecked())
-
         checked_text = "activate" if self.checkbox_accept.isChecked() else "not activate"
         self.isChecked_label.setText(f"The auto accept is {checked_text}.")
 
+    # Top Menu Bar
     def menu_bar_ui(self):
         self.menubar = QtWidgets.QMenuBar(self)
         self.menu_file = QtWidgets.QMenu('Menu')
+        self.menubar.setGeometry(QRect(0, 0, 800, 25))
 
-        self.action_sh = QtWidgets.QAction("Hide application")
-        self.action_sh.triggered.connect(self.hide)
-        self.menu_file.addAction(self.action_sh)
+        self.action_hide = QtWidgets.QAction("Hide application")
+        self.action_hide.triggered.connect(self.hide)
+        self.action_hide.setShortcut('Ctrl+H')
+        self.menu_file.addAction(self.action_hide)
 
         self.action_quit = QtWidgets.QAction('Quit')
         self.action_quit.triggered.connect(QtWidgets.qApp.quit)
+        self.action_quit.setShortcut('Ctrl+Q')
         self.menu_file.addAction(self.action_quit)
 
         self.menubar.addMenu(self.menu_file)
@@ -112,7 +114,7 @@ class MyWidget(QtWidgets.QWidget):
         # Creating the options 
         self.menu = QtWidgets.QMenu(self) 
         self.open_windows = QtWidgets.QAction("Open / Hide") 
-        self.open_windows.triggered.connect(lambda: self.hide() if self.isVisible() else self.show()) 
+        self.open_windows.triggered.connect(lambda: self.hide() if self.isVisible() else self.show())
         self.menu.addAction(self.open_windows) 
         
         # To quit the app 

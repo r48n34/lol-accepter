@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' 
+          architecture: 'x64'
+
+      - uses: Nuitka/Nuitka-Action@main
+        with:
+          nuitka-version: main
+          script-name: src/main.py
+          standalone: true
+          enable-plugins: pyqt5
+          disable-console: true
+          include-qt-plugins: sensible,styles
+          output-dir: dist
+          windows-icon-from-ico: assets/favicon.ico
+          include-data-dir: assets=assets
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: exe
+          path: dist/main.exe
