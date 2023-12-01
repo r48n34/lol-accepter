@@ -2,3 +2,5 @@ build
 dist
 lol_acc
 main.build
+.venv
+nuitka-crash-report.xml

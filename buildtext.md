@@ -6,4 +6,8 @@ python -m nuitka --mingw64 --standalone --show-progress --disable-console --show
 
 python -m nuitka --mingw64 --onefile --show-progress --disable-console --show-memory --follow-imports --enable-plugin=pyqt5   --plugin-enable=qt-plugins --include-qt-plugins=sensible,styles --output-dir=dist --windows-disable-console --windows-icon-from-ico=favicon.ico main.py
 
+## For windows
 python -m nuitka --mingw64 --standalone --show-progress --disable-console --show-memory --follow-imports --enable-plugin=pyqt5  --include-qt-plugins=sensible,styles --output-dir=dist --windows-disable-console --windows-icon-from-ico=assets/favicon.ico --include-data-dir=assets=assets main.py
+
+## For MacOS
+python -m nuitka --onefile --show-progress --disable-console --show-memory --follow-imports --enable-plugin=pyqt5  --include-qt-plugins=sensible,styles --output-dir=dist --windows-disable-console --windows-icon-from-ico=assets/favicon.ico --include-data-dir=assets=assets --macos-create-app-bundle main.py

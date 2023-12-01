@@ -17,7 +17,7 @@ class MyWidget(QtWidgets.QWidget):
         self.username: str = "Loading ..."
 
         self.setWindowTitle('lol accepter')
-        self.setFixedSize(350, 120)
+        self.setFixedSize(450, 120)
         self.setWindowIcon(QIcon(self.load_file('assets/favicon.ico')))  
         self.ui()
 
@@ -38,7 +38,12 @@ class MyWidget(QtWidgets.QWidget):
         self.window.setCentralWidget(QtWidgets.QWidget())
         self.window.setAttribute(Qt.WA_QuitOnClose, False)
 
-        # Top labels
+        self.status_label_ui()
+        self.system_tray_ui()
+        self.checkbox_ui()
+        
+    # Offline ans status label
+    def status_label_ui(self):
         self.status_label = QtWidgets.QLabel(self)
 
         self.status_label_font = self.status_label.font()
@@ -46,8 +51,10 @@ class MyWidget(QtWidgets.QWidget):
         self.status_label.setFont(self.status_label_font)
 
         self.status_label.setGeometry(10, 10, 350, 40)
-
-        # Checkbox
+    
+    
+    # Checkbox
+    def checkbox_ui(self):
         self.checkbox_accept = QtWidgets.QCheckBox(self)
         self.checkbox_accept.setChecked(True)
         self.checkbox_accept.setText("Enable auto accept")
@@ -56,7 +63,10 @@ class MyWidget(QtWidgets.QWidget):
         self.checkbox_accept_font = self.checkbox_accept.font()
         self.checkbox_accept_font.setPointSize(18)
         self.checkbox_accept.setFont(self.checkbox_accept_font)
-
+    
+    # System tray and menu
+    def system_tray_ui(self):
+        
         # Adding an icon 
         CURRENT_DIRECTORY = dirname(realpath(__file__))
         self.icon = QIcon(join(CURRENT_DIRECTORY, "favicon.ico")) 
@@ -84,7 +94,7 @@ class MyWidget(QtWidgets.QWidget):
         self.action_close .triggered.connect(QtWidgets.qApp.quit) 
         self.menu.addAction(self.action_close)
 
-        self.tray.setContextMenu(self.menu) 
+        self.tray.setContextMenu(self.menu)
 
     def setUserName(self, name: str):
         if name == "":
