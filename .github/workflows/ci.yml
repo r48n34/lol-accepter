@@ -10,13 +10,24 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x' 
-          architecture: 'x64'
+      - name: Check-out repository
+        uses: actions/checkout@v3
 
-      - uses: Nuitka/Nuitka-Action@main
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          architecture: 'x64'
+          cache: 'pip'
+          cache-dependency-path: |
+            **/requirements*.txt
+      
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Build Executable
+        uses: Nuitka/Nuitka-Action@main
         with:
           nuitka-version: main
           script-name: src/main.py
@@ -25,8 +36,8 @@ jobs:
           disable-console: true
           include-qt-plugins: sensible,styles
           output-dir: dist
-          windows-icon-from-ico: assets/favicon.ico
-          include-data-dir: assets=assets
+          windows-icon-from-ico: src/assets/favicon.ico
+          include-data-dir: src/assets=assets
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
