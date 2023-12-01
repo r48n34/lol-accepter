@@ -17,7 +17,7 @@ class MyWidget(QtWidgets.QWidget):
         self.username: str = "Loading ..."
 
         self.setWindowTitle('lol accepter')
-        self.setFixedSize(450, 120)
+        self.setFixedSize(450, 130)
         self.setWindowIcon(QIcon(self.load_file('assets/favicon.ico')))  
         self.ui()
 
@@ -33,7 +33,6 @@ class MyWidget(QtWidgets.QWidget):
         return join(dirname(__file__), file_name) 
     
     def ui(self):
-
         self.window = QtWidgets.QMainWindow()
         self.window.setCentralWidget(QtWidgets.QWidget())
         self.window.setAttribute(Qt.WA_QuitOnClose, False)
@@ -41,16 +40,22 @@ class MyWidget(QtWidgets.QWidget):
         self.status_label_ui()
         self.system_tray_ui()
         self.checkbox_ui()
+        self.menu_bar_ui()
         
     # Offline ans status label
     def status_label_ui(self):
         self.status_label = QtWidgets.QLabel(self)
-
         self.status_label_font = self.status_label.font()
         self.status_label_font.setPointSize(18)
         self.status_label.setFont(self.status_label_font)
+        self.status_label.setGeometry(10, 10, 350, 70)
 
-        self.status_label.setGeometry(10, 10, 350, 40)
+        self.isChecked_label = QtWidgets.QLabel(self)
+        self.isChecked_label.setText("The auto accept is activate.")
+        self.isChecked_label_font = self.isChecked_label.font()
+        self.isChecked_label_font.setPointSize(14)
+        self.isChecked_label.setFont(self.isChecked_label_font)
+        self.isChecked_label.setGeometry(10, 10, 350, 190)
     
     
     # Checkbox
@@ -60,10 +65,32 @@ class MyWidget(QtWidgets.QWidget):
         self.checkbox_accept.setText("Enable auto accept")
         self.checkbox_accept.setGeometry(10, 60, 250, 30)
 
+        self.checkbox_accept.toggled.connect(self.onCheckboxClicked)
+
         self.checkbox_accept_font = self.checkbox_accept.font()
         self.checkbox_accept_font.setPointSize(18)
         self.checkbox_accept.setFont(self.checkbox_accept_font)
-    
+
+    def onCheckboxClicked(self):
+        print(self.checkbox_accept.isChecked())
+
+        checked_text = "activate" if self.checkbox_accept.isChecked() else "not activate"
+        self.isChecked_label.setText(f"The auto accept is {checked_text}.")
+
+    def menu_bar_ui(self):
+        self.menubar = QtWidgets.QMenuBar(self)
+        self.menu_file = QtWidgets.QMenu('Menu')
+
+        self.action_sh = QtWidgets.QAction("Hide application")
+        self.action_sh.triggered.connect(self.hide)
+        self.menu_file.addAction(self.action_sh)
+
+        self.action_quit = QtWidgets.QAction('Quit')
+        self.action_quit.triggered.connect(QtWidgets.qApp.quit)
+        self.menu_file.addAction(self.action_quit)
+
+        self.menubar.addMenu(self.menu_file)
+
     # System tray and menu
     def system_tray_ui(self):
         
@@ -91,7 +118,7 @@ class MyWidget(QtWidgets.QWidget):
         # To quit the app 
         self.action_close = QtWidgets.QAction("Close") 
         # self.action_close .triggered.connect(self.hide) 
-        self.action_close .triggered.connect(QtWidgets.qApp.quit) 
+        self.action_close.triggered.connect(QtWidgets.qApp.quit) 
         self.menu.addAction(self.action_close)
 
         self.tray.setContextMenu(self.menu)
