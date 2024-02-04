@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread, Qt, QRect
 
-class MyWidget(QtWidgets.QWidget):
+class LolAccepcterWidget(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
@@ -169,7 +169,7 @@ class MyWidget(QtWidgets.QWidget):
                 self.setUserName("")
 
         @self.connector.close
-        async def disconnect():
+        async def disconnect(connection):
             self.setUserName("")
 
         self.connector.start()
@@ -179,7 +179,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
 
-    Form = MyWidget()
+    Form = LolAccepcterWidget()
     Form.show()    
     
     sys.exit(app.exec_())
