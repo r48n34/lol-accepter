@@ -1,2 +1,3 @@
 PyQt5==5.15.10
 lcu_driver==3.0.0
+qasync==0.27.1

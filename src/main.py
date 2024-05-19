@@ -2,6 +2,10 @@
 from lcu_driver import Connector
 
 import sys
+import asyncio
+from qasync import QEventLoop, asyncSlot 
+from functools import partial
+
 from os.path import dirname, realpath, join
 from time import sleep
 from PyQt5 import QtWidgets
@@ -41,7 +45,8 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         self.system_tray_ui()
         self.checkbox_ui()
         self.menu_bar_ui()
-        
+        self.button_ui()
+
     # Offline ans status label
     def status_label_ui(self):
         self.status_label = QtWidgets.QLabel(self)
@@ -144,11 +149,32 @@ class LolAccepcterWidget(QtWidgets.QWidget):
 
         self.setUserName(username)
 
+    @asyncSlot()
+    async def remove_token(self, connection):
+
+        self.mybutton.setEnabled(False)
+
+        await connection.request(
+            'post',
+            '/lol-challenges/v1/update-player-preferences',
+            data={"challengeIds": []}
+        )
+
+        self.mybutton.setEnabled(True)
+    
+    # Button
+    def button_ui(self):
+        self.mybutton = QtWidgets.QPushButton('Remove token', self)
+        self.mybutton.move(260, 95)
+        self.mybutton.setEnabled(False)
+
     def lcu_setup(self):
         
         @self.connector.ready
         async def connect(connection):
             await self.getCurrentUserInfo(connection)
+            self.mybutton.setEnabled(True)
+            self.mybutton.clicked.connect(partial(self.remove_token, connection))
 
         @self.connector.ws.register('/lol-matchmaking/v1/ready-check', event_types=('UPDATE',))
         async def lol_matchmaking_ready(connection, event):
@@ -171,6 +197,7 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         @self.connector.close
         async def disconnect(connection):
             self.setUserName("")
+            self.mybutton.setEnabled(False)
 
         self.connector.start()
 
