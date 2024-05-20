@@ -5,10 +5,11 @@ Simple plugins for accepting match while away from keyboard with League of Legen
 <img src="assets/banner.png" width="300" alt="project_logo"/>  
 
 ## Features
-1. Auto accept any matches up.
-2. No need to install.
-3. Easy to hide and shows, user friendly.
-4. For windows OS only currently.
+1. Auto accept any matches up.  
+2. remove challenge tokens on reload game.  
+3. No need to install.  
+4. Easy to hide and shows, user friendly.  
+5. For windows OS only currently.  
 
 ## Download
 
