@@ -21,7 +21,7 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         self.username: str = "Loading ..."
 
         self.setWindowTitle('lol accepter')
-        self.setFixedSize(450, 130)
+        self.setFixedSize(450, 160)
         self.setWindowIcon(QIcon(self.load_file('assets/favicon.ico')))  
         self.ui()
 
@@ -29,8 +29,8 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         self.connector = Connector()
         self.thread_lcu_driver = QThread()   
         self.thread_lcu_driver.run = self.lcu_setup       
-        self.thread_lcu_driver.start()       
-
+        self.thread_lcu_driver.start()   
+        
         self.setUserName("")
 
     def load_file(self, file_name: str) -> str:
@@ -43,9 +43,9 @@ class LolAccepcterWidget(QtWidgets.QWidget):
 
         self.status_label_ui()
         self.system_tray_ui()
-        self.checkbox_ui()
+        self.checkbox_accept_ui()
+        self.checkbox_remove_token_ui()
         self.menu_bar_ui()
-        self.button_ui()
 
     # Offline ans status label
     def status_label_ui(self):
@@ -60,11 +60,11 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         self.isChecked_label_font = self.isChecked_label.font()
         self.isChecked_label_font.setPointSize(14)
         self.isChecked_label.setFont(self.isChecked_label_font)
-        self.isChecked_label.setGeometry(10, 10, 350, 190)
+        self.isChecked_label.setGeometry(10, 40, 400, 190)
     
     
     # Checkbox
-    def checkbox_ui(self):
+    def checkbox_accept_ui(self):
         self.checkbox_accept = QtWidgets.QCheckBox(self)
         self.checkbox_accept.setChecked(True)
         self.checkbox_accept.setText("Enable auto accept")
@@ -79,6 +79,16 @@ class LolAccepcterWidget(QtWidgets.QWidget):
     def onCheckboxClicked(self):
         checked_text = "activate" if self.checkbox_accept.isChecked() else "not activate"
         self.isChecked_label.setText(f"The auto accept is {checked_text}.")
+    
+    def checkbox_remove_token_ui(self):
+        self.checkbox_remove_token = QtWidgets.QCheckBox(self)
+        self.checkbox_remove_token.setChecked(False)
+        self.checkbox_remove_token.setText("Remove token when reload the game")
+        self.checkbox_remove_token.setGeometry(10, 90, 380, 30)
+
+        self.checkbox_remove_token_font = self.checkbox_remove_token.font()
+        self.checkbox_remove_token_font.setPointSize(18)
+        self.checkbox_remove_token.setFont(self.checkbox_remove_token_font)
 
     # Top Menu Bar
     def menu_bar_ui(self):
@@ -149,32 +159,18 @@ class LolAccepcterWidget(QtWidgets.QWidget):
 
         self.setUserName(username)
 
-    @asyncSlot()
-    async def remove_token(self, connection):
-
-        self.mybutton.setEnabled(False)
-
-        await connection.request(
-            'post',
-            '/lol-challenges/v1/update-player-preferences',
-            data={"challengeIds": []}
-        )
-
-        self.mybutton.setEnabled(True)
-    
-    # Button
-    def button_ui(self):
-        self.mybutton = QtWidgets.QPushButton('Remove token', self)
-        self.mybutton.move(260, 95)
-        self.mybutton.setEnabled(False)
+        if self.checkbox_remove_token.isChecked():
+            await connection.request(
+                'post',
+                '/lol-challenges/v1/update-player-preferences',
+                data={"challengeIds": []}
+            )
 
     def lcu_setup(self):
         
         @self.connector.ready
         async def connect(connection):
             await self.getCurrentUserInfo(connection)
-            self.mybutton.setEnabled(True)
-            self.mybutton.clicked.connect(partial(self.remove_token, connection))
 
         @self.connector.ws.register('/lol-matchmaking/v1/ready-check', event_types=('UPDATE',))
         async def lol_matchmaking_ready(connection, event):
@@ -197,7 +193,6 @@ class LolAccepcterWidget(QtWidgets.QWidget):
         @self.connector.close
         async def disconnect(connection):
             self.setUserName("")
-            self.mybutton.setEnabled(False)
 
         self.connector.start()
 
